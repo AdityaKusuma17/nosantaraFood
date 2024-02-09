@@ -1,64 +1,54 @@
-import { getFoodReceipt, generateElement } from "./script.js";
+import { getFoodReceipt, generateElement } from './script.js';
 
-const menu_makanan = document.getElementById("menu_makanan");
+const chicken_parmesan = document.getElementById('chicken_parmesan');
+const input = document.getElementById('input'); // tambahkan elemen input di HTML dengan id 'input'
 
 async function panggilMenu() {
   const hasil = await getFoodReceipt();
   console.log(hasil);
 
-  // hasil.forEach((item) => {
-  //   console.log(item);
-  //   const new_element = generateElement({
-  //     // 1. tag: "div",
-  //     // value: item.id,
-  //     // className: "card",
-  //     // ctrl + space
+  // fungsi untuk memfilter array hasil berdasarkan nilai input
+  const filterMenu = (query) => hasil.filter((item) => item.title.toLowerCase().includes(query.toLowerCase()));
 
-  //     // 2.  for image
-  //     // tag: "img",
-  //     // // value: item.id,
-  //     // src: item.images,
-  //     // className: "card",
-  //     // // ctrl + space
+  // fungsi untuk menghapus elemen-elemen lama dan menambahkan elemen-elemen baru
+  function updateMenu(array) {
+    // hapus semua elemen anak dari chicken_parmesan
+    while (chicken_parmesan.firstChild) {
+      chicken_parmesan.removeChild(chicken_parmesan.firstChild);
+    }
+    // tambahkan elemen-elemen baru dari array
+    array.forEach((item) => {
+      // gunakan destructuring assignment untuk mengekstrak properti dari item
+      const { title, images, id } = item;
 
-  //     // 3. <a ></a>
-  //     tag: "a",
-  //     value: item.title,
-  //     // src: item.images,
-  //     href: "/detail/" + item.id,
-  //     className: "card",
-  //     // ctrl + space
+      const new_element_image = generateElement({
+        tag: 'img',
+        src: images,
+      });
 
-  //   });
+      const new_element = generateElement({
+        tag: 'a',
+        // gunakan template literals untuk membuat string yang mengandung id
+        href: `/detail/${id}`,
+        value: title,
+      });
 
-  //   menu_makanan.append(new_element);
-  // });
-
-  // jika case image dan anchor
-  hasil.forEach((item) => {
-    // 1. image
-    const new_element_image = generateElement({
-      //     // 1. tag: "div",
-      tag: "img",
-      src: item.images,
-      // className: "card",
+      chicken_parmesan.append(...[new_element_image, new_element]);
     });
+  }
 
-    // 2. element anchor
-    const new_element = generateElement({
-      //     // 1. tag: "div",
-      tag: "a",
-      href: "/detail/" + item.id,
-      value: item.title,
-      // className: "card",
-    });
-
-    // // image di masukkan dalam new_element
-    // new_element.append(new_element_image);
-    // // new_element dimasukkan dalam div dengan id menu_makanan
-    // menu_makanan.append(new_element);
-    menu_makanan.append(...[new_element_image, new_element]);
+  // tambahkan event listener untuk input
+  input.addEventListener('input', (event) => {
+    // dapatkan nilai input
+    const query = event.target.value;
+    // filter array hasil berdasarkan nilai input
+    const filtered = filterMenu(query);
+    // update elemen-elemen di HTML dengan array hasil filter
+    updateMenu(filtered);
   });
+
+  // tampilkan semua elemen di awal
+  updateMenu(hasil);
 }
 
 panggilMenu();

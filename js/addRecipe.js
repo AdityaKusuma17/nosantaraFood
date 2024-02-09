@@ -1,45 +1,57 @@
-const axios = require('axios');
+const BASE_URL = 'http://128.199.167.159/v1/idc';
 
-// Data resep makanan yang akan ditambahkan
-const newRecipe = {
-  title: 'Spaghetti Carbonara',
-  description: 'A classic Italian pasta dish featuring eggs, cheese, pancetta, and black pepper.',
-  images: 'https://images.unsplash.com/photo-1565294475508-6bf9c5a5810f?q=80&fm=jpg&w=1200&fit=max',
-  ingredients: [
-    '12 ounces spaghetti',
-    '2 large eggs',
-    '1 cup grated Pecorino Romano cheese',
-    '4 ounces pancetta or bacon, diced',
-    '2 cloves garlic, minced',
-    'Freshly ground black pepper',
-    'Salt to taste',
-    '2 tablespoons chopped fresh parsley leaves',
-  ],
-  instructions:
-    'Cook spaghetti according to package instructions until al dente. While spaghetti is cooking, whisk together eggs, Pecorino Romano cheese, and a generous amount of black pepper in a bowl. In a large skillet, cook pancetta over medium heat until crispy. Add minced garlic to the skillet and cook until fragrant. Remove from heat. When spaghetti is done, reserve 1/2 cup of pasta water, then drain spaghetti and immediately add it to the skillet with pancetta and garlic. Toss well to coat spaghetti with the pancetta fat. Remove skillet from heat. Quickly pour in the egg and cheese mixture, tossing vigorously to coat the spaghetti. If the sauce seems too thick, gradually add reserved pasta water until desired consistency is reached. Season with salt if needed. Serve immediately, garnished with chopped parsley.',
-  servings: 4,
-  prep_time: 10,
-  cook_time: 10,
-  total_time: 20,
-};
+// http://128.199.167.159/v1/idc/food-receipt
 
-// Fungsi untuk menambahkan resep makanan ke API
-async function addFoodRecipe(recipe) {
+export async function createFoodReceipt({ payload = undefined }) {
   try {
-    const response = await axios.post('http://128.199.167.159/v1/idc/food-receipt', recipe);
-    console.log('Resep berhasil ditambahkan:', response.data);
-    return response.data;
+    const response = await fetch(`${BASE_URL}/food-receipt`, {
+      method: 'POST',
+      body: JSON.stringify(payload),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    const result = await response.json();
+    return result;
   } catch (error) {
-    console.error('Gagal menambahkan resep:', error.response.data);
-    throw new Error('Gagal menambahkan resep');
+    console.error('Error Nih: ', {
+      error,
+    });
   }
 }
 
-// Panggil fungsi untuk menambahkan resep makanan
-addFoodRecipe(newRecipe)
-  .then(() => {
-    console.log('Resep berhasil ditambahkan!');
-  })
-  .catch((error) => {
-    console.error('Terjadi kesalahan:', error.message);
+const inputTitle = document.getElementById('title');
+const inpoutDescription = document.getElementById('description');
+const inputImages = document.getElementById('images');
+const inputIngredients = document.getElementById('ingredients');
+const inputInstructions = document.getElementById('instructions');
+const inputServings = document.getElementById('servings');
+const inputPrepTime = document.getElementById('prep_time');
+const inputCookTime = document.getElementById('cook_time');
+const inputTotalTime = document.getElementById('total_time');
+
+const buttonSumbit = document.getElementById('send-data');
+
+document.addEventListener('DOMContentLoaded', function () {
+  // fungsi menambahkan resep makanan ke server/api
+
+  buttonSumbit.addEventListener('click', () => {
+    console.log('click');
+    const payload = {
+      title: inputTitle.value,
+      description: inpoutDescription.value,
+      images: inputImages.value,
+      ingredients: inputIngredients.value,
+      instructions: inputInstructions.value,
+      servings: Number(inputServings.value),
+      prep_time: Number(inputPrepTime.value),
+      cook_time: Number(inputCookTime.value),
+      total_time: Number(inputTotalTime.value),
+    };
+
+    createFoodReceipt({ payload: payload });
+    // window.location.href = "/menumakanan.html";
+    // console.log({ payload })
   });
+});

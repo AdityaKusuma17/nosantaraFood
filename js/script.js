@@ -57,24 +57,7 @@ export async function getFoodReceipt() {
   }
 }
 
-export async function createQuestion({ payload = undefined }) {
-  try {
-    const response = await fetch(`${BASE_URL}/api/food`, {
-      method: "POST",
-      body: JSON.stringify(payload),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
 
-    const result = await response.json();
-    return result;
-  } catch (error) {
-    console.error("Error Nih: ", {
-      error,
-    });
-  }
-}
 
 export async function updateQuestionById({ id = 1, payload = undefined }) {
   try {
