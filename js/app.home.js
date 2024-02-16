@@ -1,6 +1,6 @@
 import { getFoodReceipt, generateElement } from './script.js';
 
-const chicken_parmesan = document.getElementById('chicken_parmesan');
+const rendang_padang = document.getElementById('rendang_padang');
 const input = document.getElementById('input'); // tambahkan elemen input di HTML dengan id 'input'
 
 async function panggilMenu() {
@@ -13,8 +13,8 @@ async function panggilMenu() {
   // fungsi untuk menghapus elemen-elemen lama dan menambahkan elemen-elemen baru
   function updateMenu(array) {
     // hapus semua elemen anak dari chicken_parmesan
-    while (chicken_parmesan.firstChild) {
-      chicken_parmesan.removeChild(chicken_parmesan.firstChild);
+    while (rendang_padang.firstChild) {
+      rendang_padang.removeChild(rendang_padang.firstChild);
     }
     // tambahkan elemen-elemen baru dari array
     array.forEach((item) => {
@@ -33,7 +33,7 @@ async function panggilMenu() {
         value: title,
       });
 
-      chicken_parmesan.append(...[new_element_image, new_element]);
+      rendang_padang.append(...[new_element_image, new_element]);
     });
   }
 
