@@ -1,54 +1,32 @@
-import { getFoodReceipt, generateElement } from './script.js';
-
-const rendang_padang = document.getElementById('rendang_padang');
-const input = document.getElementById('input'); // tambahkan elemen input di HTML dengan id 'input'
-
 async function panggilMenu() {
-  const hasil = await getFoodReceipt();
-  console.log(hasil);
+  console.log('hello world');
+  const res = await fetch('http://128.199.167.159/v1/idc/food-receipts');
+  const data = await res.json();
+  console.log(data);
 
-  // fungsi untuk memfilter array hasil berdasarkan nilai input
-  const filterMenu = (query) => hasil.filter((item) => item.title.toLowerCase().includes(query.toLowerCase()));
+  const foods = data.data
+    .map((item) => {
+      const el = `
+    <div class=" p-4 rounded-lg shadow-md">
+        <img
+          src="${item.images}"
+          alt="${item.title}"
+          class="w-full h-48 object-cover rounded-lg"
+        />
+        <h3 class="mt-5 text-center text-lg font-semibold">${item.title}</h3>
+        <p class="text-gray-600 text-center">${item.description}</p>
+      </div>
+    `;
+      console.log(item);
 
-  // fungsi untuk menghapus elemen-elemen lama dan menambahkan elemen-elemen baru
-  function updateMenu(array) {
-    // hapus semua elemen anak dari chicken_parmesan
-    while (rendang_padang.firstChild) {
-      rendang_padang.removeChild(rendang_padang.firstChild);
-    }
-    // tambahkan elemen-elemen baru dari array
-    array.forEach((item) => {
-      // gunakan destructuring assignment untuk mengekstrak properti dari item
-      const { title, images, id } = item;
+      return el;
+    })
+    .join('');
 
-      const new_element_image = generateElement({
-        tag: 'img',
-        src: images,
-      });
+  console.log(foods);
 
-      const new_element = generateElement({
-        tag: 'a',
-        // gunakan template literals untuk membuat string yang mengandung id
-        href: `/detail/${id}`,
-        value: title,
-      });
-
-      rendang_padang.append(...[new_element_image, new_element]);
-    });
-  }
-
-  // tambahkan event listener untuk input
-  input.addEventListener('input', (event) => {
-    // dapatkan nilai input
-    const query = event.target.value;
-    // filter array hasil berdasarkan nilai input
-    const filtered = filterMenu(query);
-    // update elemen-elemen di HTML dengan array hasil filter
-    updateMenu(filtered);
-  });
-
-  // tampilkan semua elemen di awal
-  updateMenu(hasil);
+  const container = document.getElementById('foods-container');
+  container.innerHTML = foods;
 }
 
 panggilMenu();
